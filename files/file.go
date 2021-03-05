@@ -64,10 +64,7 @@ func Create(path string) error {
 	if !IsExist(path) {
 		// 路径转换，window下是"\",转为"/"
 		path = filepath.ToSlash(path)
-
-		// 获取到dir
-		dir := filepath.Dir(path)
-		err := CreateDir(dir)
+		err := CreateDir(path)
 		if err != nil {
 			return err
 		}

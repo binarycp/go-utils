@@ -1,3 +1,3 @@
 module github.com/binarycp/gutils
 
-go 1.16
+go 1.13

@@ -31,11 +31,17 @@ var (
 		println("run payload loop2.")
 		return []byte(`错误任务2`), errors.New("run continue")
 	}
+
+	timeoutPayload = func() ([]byte, error) {
+		println("run payload timeout.")
+		time.Sleep(400 * time.Millisecond)
+		return []byte(`超时任务`), errors.New("run timeout")
+	}
 )
 
 func TestTask_Each(t1 *testing.T) {
 	task := NewTask(3 * time.Second)
-	task.Add(NewLink(3*time.Millisecond, callBack, normalPayload),
+	task.Add(NewLink(3*time.Millisecond, callBack, timeoutPayload),
 		NewLink(3*time.Millisecond, callBack, errPayload),
 		NewLink(3*time.Millisecond, callBack, normalPayload),
 		NewLink(3*time.Millisecond, callBack, errPayload1),

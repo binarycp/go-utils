@@ -1,7 +1,10 @@
 package task
 
 import (
+	"context"
 	"errors"
+	"fmt"
+	"runtime"
 	"testing"
 	"time"
 )
@@ -49,4 +52,26 @@ func TestTask_Each(t1 *testing.T) {
 		NewLink(3*time.Millisecond, callBack, normalPayload),
 	)
 	task.Each()
+}
+
+func TestGoroutine(t *testing.T) {
+	t.Helper()
+	timeout, _ := context.WithTimeout(context.Background(), time.Second)
+	for i := 0; i < 1; i++ {
+		go loop(timeout)
+	}
+	time.Sleep(time.Second * 2)
+	t.Log(runtime.NumGoroutine())
+}
+
+func loop(c context.Context) {
+	t := time.Now()
+	for {
+		select {
+		case <-c.Done():
+			fmt.Println(time.Since(t))
+			return
+		default:
+		}
+	}
 }

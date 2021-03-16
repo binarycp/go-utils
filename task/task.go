@@ -43,26 +43,24 @@ func (t *Task) Add(links ...*Link) {
 
 // 遍历任务链表
 func (t *Task) Each() {
-	t.Link = each(t.Link, t.interval)
-	ticker := time.NewTicker(t.interval)
-	defer ticker.Stop()
+	each(t)
 	for t.Link != nil {
-		<-ticker.C
-		t.Link = each(t.Link, t.interval)
-		ticker.Reset(t.interval)
+		time.Sleep(t.interval)
+		each(t)
 	}
 }
 
 // 遍历任务链表
-func each(t *Link, interval time.Duration) *Link {
+func each(task *Task) {
+	t := task.Link
 	if t == nil {
-		return nil
+		return
 	}
 	var payload []byte
 	var err error
 	list := make([]*Link, 0)
 	done := make(chan struct{})
-	ticker := time.NewTicker(interval)
+	ticker := time.NewTicker(task.interval)
 	defer ticker.Stop()
 	for ; true; <-ticker.C {
 		go func() {
@@ -92,9 +90,10 @@ func each(t *Link, interval time.Duration) *Link {
 		}
 	}
 
+	println(len(list))
 	var ret *Link
 	for index := len(list) - 1; index >= 0; index-- {
 		list[index].Next, ret = ret, list[index]
 	}
-	return ret
+	task.Link = ret
 }

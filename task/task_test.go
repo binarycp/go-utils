@@ -21,10 +21,26 @@ var (
 		println("run payload loop.")
 		return []byte(`错误任务`), errors.New("run continue")
 	}
+
+	errPayload1 = func() ([]byte, error) {
+		println("run payload loop1.")
+		return []byte(`错误任务1`), errors.New("run continue")
+	}
+
+	errPayload2 = func() ([]byte, error) {
+		println("run payload loop2.")
+		return []byte(`错误任务2`), errors.New("run continue")
+	}
 )
 
 func TestTask_Each(t1 *testing.T) {
 	task := NewTask(3 * time.Second)
-	task.Add(NewLink(3*time.Millisecond, callBack, normalPayload), NewLink(3*time.Millisecond, callBack, errPayload), NewLink(3*time.Millisecond, callBack, normalPayload))
+	task.Add(NewLink(3*time.Millisecond, callBack, normalPayload),
+		NewLink(3*time.Millisecond, callBack, errPayload),
+		NewLink(3*time.Millisecond, callBack, normalPayload),
+		NewLink(3*time.Millisecond, callBack, errPayload1),
+		NewLink(3*time.Millisecond, callBack, errPayload2),
+		NewLink(3*time.Millisecond, callBack, normalPayload),
+	)
 	task.Each()
 }

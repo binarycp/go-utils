@@ -5,6 +5,7 @@ import "time"
 type Task struct {
 	interval time.Duration
 	link     *Link
+	stop     bool
 }
 
 // 定时执行任务
@@ -43,11 +44,18 @@ func (t *Task) Add(links ...*Link) {
 
 // 遍历任务链表
 func (t *Task) Each() {
+	close(t)
 	each(t)
 	for t.link != nil {
 		time.Sleep(t.interval)
 		each(t)
 	}
+	println("finish")
+}
+
+// 终止任务
+func (t *Task) Stop() {
+	t.stop = true
 }
 
 // 遍历任务链表
@@ -56,6 +64,8 @@ func each(task *Task) {
 	if t == nil {
 		return
 	}
+	defer close(task)
+
 	var payload []byte
 	var err error
 	list := make([]*Link, 0)
@@ -91,4 +101,10 @@ func each(task *Task) {
 		list[index].Next, ret = ret, list[index]
 	}
 	task.link = ret
+}
+
+func close(task *Task) {
+	if task.stop {
+		task.link = nil
+	}
 }

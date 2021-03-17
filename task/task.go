@@ -4,7 +4,7 @@ import "time"
 
 type Task struct {
 	interval time.Duration
-	*Link
+	link     *Link
 }
 
 // 定时执行任务
@@ -20,7 +20,7 @@ type Link struct {
 func NewTask(interval time.Duration) *Task {
 	return &Task{
 		interval: interval,
-		Link:     nil,
+		link:     nil,
 	}
 }
 
@@ -37,15 +37,14 @@ func NewLink(timeout time.Duration, callback func([]byte), payload func() ([]byt
 // 向链表添加元素
 func (t *Task) Add(links ...*Link) {
 	for index := len(links) - 1; index >= 0; index-- {
-		links[index].Next, t.Link = t.Link, links[index]
+		links[index].Next, t.link = t.link, links[index]
 	}
-
 }
 
 // 遍历任务链表
 func (t *Task) Each() {
 	each(t)
-	for t.Link != nil {
+	for t.link != nil {
 		time.Sleep(t.interval)
 		each(t)
 	}
@@ -53,7 +52,7 @@ func (t *Task) Each() {
 
 // 遍历任务链表
 func each(task *Task) {
-	t := task.Link
+	t := task.link
 	if t == nil {
 		return
 	}
@@ -92,5 +91,5 @@ func each(task *Task) {
 	for index := len(list) - 1; index >= 0; index-- {
 		list[index].Next, ret = ret, list[index]
 	}
-	task.Link = ret
+	task.link = ret
 }

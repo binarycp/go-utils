@@ -86,7 +86,6 @@ func each(task *Task) {
 		}
 	}
 
-	println(len(list))
 	var ret *Link
 	for index := len(list) - 1; index >= 0; index-- {
 		list[index].Next, ret = ret, list[index]

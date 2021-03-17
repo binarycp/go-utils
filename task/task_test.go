@@ -43,15 +43,23 @@ var (
 )
 
 func TestTask_Each(t1 *testing.T) {
+	t1.Helper()
 	task := NewTask(3 * time.Second)
-	task.Add(NewLink(3*time.Millisecond, callBack, timeoutPayload),
-		NewLink(3*time.Millisecond, callBack, errPayload),
+	task.Add(
+		//NewLink(3*time.Millisecond, callBack, timeoutPayload),
+		//NewLink(3*time.Millisecond, callBack, errPayload),
 		NewLink(3*time.Millisecond, callBack, normalPayload),
-		NewLink(3*time.Millisecond, callBack, errPayload1),
-		NewLink(3*time.Millisecond, callBack, errPayload2),
+		//NewLink(3*time.Millisecond, callBack, errPayload1),
+		//NewLink(3*time.Millisecond, callBack, errPayload2),
 		NewLink(3*time.Millisecond, callBack, normalPayload),
 	)
 	task.Each()
+	task.Each()
+	task.Each()
+	//time.Sleep(time.Second)
+	//task.Stop()
+	//println(task.link == nil)
+	t1.Log(runtime.NumGoroutine())
 }
 
 func TestGoroutine(t *testing.T) {
@@ -74,4 +82,11 @@ func loop(c context.Context) {
 		default:
 		}
 	}
+}
+
+func TestChan(t *testing.T) {
+	c := make(chan struct{}, 2)
+	println(cap(c), len(c))
+	c <- struct{}{}
+	println(cap(c), len(c))
 }

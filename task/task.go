@@ -31,7 +31,6 @@ func (t *Task) Each() {
 		time.Sleep(t.interval)
 		each(t)
 	}
-	println("finish")
 }
 
 // 终止任务

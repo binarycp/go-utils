@@ -8,30 +8,11 @@ type Task struct {
 	stop     bool
 }
 
-// 定时执行任务
-// 具备超时时间
-type Link struct {
-	Timeout  time.Duration
-	Next     *Link
-	Callback func([]byte)
-	Payload  func() ([]byte, error)
-}
-
 // 实例化任务
 func NewTask(interval time.Duration) *Task {
 	return &Task{
 		interval: interval,
 		link:     nil,
-	}
-}
-
-// 实例化链表
-func NewLink(timeout time.Duration, callback func([]byte), payload func() ([]byte, error)) *Link {
-	return &Link{
-		Timeout:  timeout,
-		Next:     nil,
-		Callback: callback,
-		Payload:  payload,
 	}
 }
 
@@ -80,9 +61,7 @@ func each(task *Task) {
 		select {
 		case <-done:
 			if err == nil {
-				if t.Callback != nil {
-					t.Callback(payload)
-				}
+				t.CallBack(payload)
 			} else {
 				list = append(list, t)
 			}

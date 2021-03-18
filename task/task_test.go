@@ -42,19 +42,51 @@ var (
 	}
 )
 
+type timeout struct {
+}
+
+func (t timeout) CallBack(p []byte) {
+	//println("run callback")
+	println(string(p), "执行成功")
+}
+
+func (t timeout) Payload() ([]byte, error) {
+	println("run payload timeout.")
+	time.Sleep(400 * time.Millisecond)
+	return []byte(`超时任务`), errors.New("run timeout")
+}
+
+type normal struct {
+	timeout
+}
+
+func (n normal) Payload() ([]byte, error) {
+	println("run payload")
+	return []byte(`正常任务`), nil
+}
+
+type err struct {
+	timeout
+	name string
+}
+
+func (e err) Payload() ([]byte, error) {
+	println(e.name, "run payload loop.")
+	return []byte(e.name + `错误任务`), errors.New("run continue")
+}
+
 func TestTask_Each(t1 *testing.T) {
 	t1.Helper()
 	task := NewTask(3 * time.Second)
 	task.Add(
-		NewLink(3*time.Millisecond, callBack, timeoutPayload),
-		NewLink(3*time.Millisecond, callBack, errPayload),
-		NewLink(3*time.Millisecond, callBack, normalPayload),
-		NewLink(3*time.Millisecond, callBack, errPayload1),
-		NewLink(3*time.Millisecond, callBack, errPayload2),
-		NewLink(3*time.Millisecond, callBack, normalPayload),
+		NewLink(3*time.Millisecond, timeout{}),
+		NewLink(3*time.Millisecond, err{name: "one"}),
+		NewLink(3*time.Millisecond, normal{}),
+		NewLink(3*time.Millisecond, err{name: "two"}),
+		NewLink(3*time.Millisecond, err{name: "three"}),
+		NewLink(3*time.Millisecond, normal{}),
 	)
 	go task.Each()
-	task.Stop()
 	time.Sleep(4 * 6 * time.Second)
 	t1.Log(runtime.NumGoroutine())
 }

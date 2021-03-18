@@ -56,16 +56,16 @@ func each(task *Task) {
 		go func() {
 			payload, err = t.Payload()
 			done <- struct{}{}
+			if err == nil {
+				t.CallBack(payload)
+			}
 		}()
 		select {
 		case <-done:
-			if err == nil {
-				t.CallBack(payload)
-			} else {
+			if err != nil {
 				list = append(list, t)
 			}
-		case <-time.After(t.Timeout):
-			list = append(list, t)
+		case <-time.After(task.interval):
 		}
 
 		t = t.Next

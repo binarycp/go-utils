@@ -17,3 +17,13 @@ func EqualToByte(a []byte, b []byte) bool {
 
 	return true
 }
+
+func ContainsByte(a []byte, b ...[]byte) bool {
+	for k, _ := range b {
+		if EqualToByte(a, b[k]) {
+			return true
+		}
+	}
+
+	return false
+}

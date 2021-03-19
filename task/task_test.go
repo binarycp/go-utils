@@ -46,12 +46,7 @@ func TestTask_Each(t1 *testing.T) {
 	t1.Helper()
 	task := NewTask(3 * time.Second)
 	task.Add(
-		NewLink(timeout{}),
-		NewLink(err{name: "one"}),
-		NewLink(normal{}),
-		NewLink(err{name: "two"}),
-		NewLink(err{name: "three"}),
-		NewLink(normal{}),
+		NewLinks(timeout{}, err{name: "one"}, normal{}, err{name: "two"}, err{name: "three"}, normal{})...,
 	)
 	task.Each()
 	//time.Sleep(4 * 6 * time.Second)

@@ -19,3 +19,20 @@ func NewLink(p Procedure) *Link {
 		Procedure: p,
 	}
 }
+
+func NewLinks(p ...Procedure) []*Link {
+	i := len(p)
+	if p == nil || i == 0 {
+		return nil
+	}
+
+	links := make([]*Link, i, i)
+
+	for k, _ := range p {
+		links[k] = &Link{
+			Procedure: p[k],
+		}
+	}
+
+	return links
+}

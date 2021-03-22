@@ -49,7 +49,7 @@ func TestTask_Each(t1 *testing.T) {
 		NewLinks(timeout{}, err{name: "one"}, normal{}, err{name: "two"}, err{name: "three"}, normal{})...,
 	)
 	task.Each()
-	//time.Sleep(4 * 6 * time.Second)
+	time.Sleep(4 * 6 * time.Second)
 	t1.Log(runtime.NumGoroutine())
 }
 

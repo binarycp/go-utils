@@ -53,13 +53,13 @@ func each(task *Task) {
 	defer ticker.Stop()
 	for ; true; <-ticker.C {
 		done := make(chan struct{}, 1)
-		go func() {
+		go func(l *Link) {
 			payload, err = t.Payload()
 			done <- struct{}{}
 			if err == nil {
 				t.CallBack(payload)
 			}
-		}()
+		}(t)
 		select {
 		case <-done:
 			if err != nil {

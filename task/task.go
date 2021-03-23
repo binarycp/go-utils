@@ -50,14 +50,17 @@ func each(task *Task) {
 	var err error
 	list := make([]*Link, 0)
 	ticker := time.NewTicker(task.interval)
+	ticker1 := time.NewTicker(task.interval)
 	defer ticker.Stop()
+	defer ticker1.Stop()
 	for ; true; <-ticker.C {
 		done := make(chan struct{}, 1)
+		ticker1.Reset(task.interval)
 		go func(l Link) {
-			payload, err = t.Payload()
+			payload, err = l.Payload()
 			done <- struct{}{}
 			if err == nil {
-				t.CallBack(payload)
+				l.CallBack(payload)
 			}
 		}(*t)
 		select {
@@ -65,7 +68,7 @@ func each(task *Task) {
 			if err != nil {
 				list = append(list, t)
 			}
-		case <-time.After(task.interval):
+		case <-ticker1.C:
 		}
 
 		t = t.Next

@@ -81,3 +81,25 @@ func TestChan(t *testing.T) {
 	c <- struct{}{}
 	println(cap(c), len(c))
 }
+
+func TestTicker(t *testing.T) {
+	ticker := time.NewTicker(time.Second * 2)
+	ticker1 := time.NewTicker(time.Second * 2)
+
+	for ; true; <-ticker.C {
+		done := make(chan struct{}, 1)
+		ticker1.Reset(time.Second * 2)
+		go func() {
+			println("running")
+			time.Sleep(time.Second * 4)
+			done <- struct{}{}
+			println("finish")
+		}()
+		select {
+		case <-done:
+			println("done")
+		case <-ticker1.C:
+			println("timeout")
+		}
+	}
+}

@@ -57,6 +57,9 @@ func each(task *Task) {
 		done := make(chan struct{}, 1)
 		ticker.Reset(task.interval)
 		go func(l Link) {
+			defer func() {
+				recover()
+			}()
 			payload, err = l.Payload()
 			done <- struct{}{}
 			if err == nil {

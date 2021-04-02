@@ -4,6 +4,7 @@ import "os"
 
 func Quit(err error) {
 	Handle(err, func() {
+		println(err.Error())
 		os.Exit(99)
 	})
 }
